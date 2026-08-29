@@ -21,7 +21,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID uuid;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String username;
 
     @Column(nullable = false)
@@ -30,7 +30,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks = new ArrayList<>();
 
 }
