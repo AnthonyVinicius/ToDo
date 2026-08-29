@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -21,13 +21,23 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID uuid;
 
+    @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
     private String description;
 
-    private String deliveryTime;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 
+    @Column(nullable = false)
+    private LocalDateTime dueAt;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Status status;
 
-    private List<Task> tasks;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_uuid", nullable = false)
+    private User user;
 }

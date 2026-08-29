@@ -1,10 +1,11 @@
 package com.anthony.todo.mapper;
 
+import com.anthony.todo.dto.UserRequest;
 import com.anthony.todo.dto.UserResponse;
 import com.anthony.todo.entity.User;
-import lombok.experimental.UtilityClass;
+import org.springframework.stereotype.Component;
 
-@UtilityClass
+@Component
 public class UserMapper {
 
     public UserResponse toDTO(User user) {
@@ -13,5 +14,15 @@ public class UserMapper {
                 user.getUsername(),
                 user.getEmail()
         );
+    }
+
+    public User toEntity(UserRequest userRequest) {
+        User user = new User();
+
+        user.setEmail(userRequest.email());
+        user.setUsername(userRequest.username());
+        user.setPassword(userRequest.password());
+
+        return user;
     }
 }

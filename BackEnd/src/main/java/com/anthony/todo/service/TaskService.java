@@ -1,7 +1,11 @@
 package com.anthony.todo.service;
 
+import com.anthony.todo.dto.TaskRequest;
+import com.anthony.todo.dto.TaskResponse;
 import com.anthony.todo.entity.Task;
+import com.anthony.todo.mapper.TaskMapper;
 import com.anthony.todo.repository.TaskRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,20 +17,39 @@ import java.util.UUID;
 public class TaskService {
 
     public final TaskRepository taskRepository;
+    public final TaskMapper mapper;
 
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+    @Transactional
+    public List<TaskResponse> getAllTasks() {
+        return taskRepository.findAll()
+                .stream()
+                .map(mapper::toDTO)
+                .toList();
     }
 
-    public Task getTaskById(UUID uuid) {
-        return taskRepository.findById(uuid).orElse(null);
+    @Transactional
+    public TaskResponse getTaskById(UUID uuid) {
+        Task task = findTaskById(uuid);
+        return mapper.toDTO(task);
     }
 
-    public Task createTask(Task task) {
-        return taskRepository.save(task);
+    @Transactional
+    public TaskResponse createTask(TaskRequest dto) {
+        Task task = mapper.toEntity(dto);
+
+        Task savedTask = taskRepository.save(task);
+
+        return mapper.toDTO(savedTask);
     }
 
+    @Transactional
     public void deleteTask(UUID uuid) {
-        taskRepository.deleteById(uuid);
-    };
+        Task task = findTaskById(uuid);
+        taskRepository.delete(task);
+    }
+
+    private Task findTaskById(UUID uuid) {
+        return taskRepository.findById(uuid)
+                .orElseThrow(() -> new RuntimeException("Task not found."));
+    }
 }

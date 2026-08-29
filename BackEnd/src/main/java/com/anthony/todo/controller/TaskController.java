@@ -1,5 +1,7 @@
 package com.anthony.todo.controller;
 
+import com.anthony.todo.dto.TaskRequest;
+import com.anthony.todo.dto.TaskResponse;
 import com.anthony.todo.entity.Task;
 import com.anthony.todo.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -16,21 +18,21 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping()
-    public List<Task> getAllTasks() {
+    public List<TaskResponse> getAllTasks() {
     return taskService.getAllTasks();
     }
 
-    @GetMapping("/{id}")
-    public Task getTaskById(@PathVariable UUID uuid) {
+    @GetMapping("/{uuid}")
+    public TaskResponse getTaskById(@PathVariable UUID uuid) {
         return taskService.getTaskById(uuid);
     }
 
     @PostMapping()
-    public Task createTask(@RequestBody Task task) {
+    public TaskResponse createTask(@RequestBody TaskRequest task) {
         return taskService.createTask(task);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{uuid}")
     public void deleteTask(@PathVariable UUID uuid) {
         taskService.deleteTask(uuid);
     }
