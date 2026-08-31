@@ -2,9 +2,11 @@ package com.anthony.todo.controller;
 import com.anthony.todo.dto.TaskResponse;
 import com.anthony.todo.dto.UserRequest;
 import com.anthony.todo.dto.UserResponse;
-import com.anthony.todo.entity.Task;
 import com.anthony.todo.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,12 +34,13 @@ public class UserController {
         return userService.getUserTasks(uuid);
     }
     @PostMapping()
-    public UserResponse createUser(@RequestBody UserRequest dto) {
-        return userService.createUser(dto);
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(dto));
     }
 
     @DeleteMapping("/{uuid}")
-    public void deleteUser(@PathVariable UUID uuid) {
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID uuid) {
         userService.deleteUser(uuid);
+        return ResponseEntity.noContent().build();
     }
 }
