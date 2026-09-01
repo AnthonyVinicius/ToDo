@@ -1,0 +1,42 @@
+<main class="auth-shell">
+  <section class="auth-brand" aria-label="Apresentação">
+    <a class="brand" routerLink="/"
+      ><span class="brand-mark"><mat-icon>check</mat-icon></span
+      ><span>TO DO</span></a
+    >
+    <div class="brand-copy">
+      <h1>Gerenciador de tarefas</h1>
+      <p>Acompanhe suas tarefas, prazos e status em um único lugar.</p>
+    </div>
+
+  </section>
+
+  <section class="auth-panel">
+    <div class="auth-card">
+      <div class="mobile-brand">
+        <span class="brand-mark"><mat-icon>check</mat-icon></span
+        >TO DO
+      </div>
+      <h2>Entre na sua conta</h2>
+      <p class="subtitle">Informe seus dados para acessar suas tarefas.</p>
+
+      <form>
+        <mat-form-field appearance="outline">
+          <mat-label>E-mail</mat-label><mat-icon matPrefix>mail_outline</mat-icon>
+          <input matInput type="email" autocomplete="email" placeholder="voce@exemplo.com" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Senha</mat-label><mat-icon matPrefix>lock_outline</mat-icon>
+          <input matInput type="password" autocomplete="current-password" />
+          <button mat-icon-button matSuffix type="button" aria-label="Mostrar senha">
+            <mat-icon>visibility_off</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <a mat-flat-button class="primary-action" routerLink="/dashboard">Entrar</a>
+      </form>
+      <p class="switch-auth">Ainda não tem uma conta? <a routerLink="/register">Criar conta</a></p>
+    </div>
+  </section>
+</main>
