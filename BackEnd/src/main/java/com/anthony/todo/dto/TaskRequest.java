@@ -9,11 +9,11 @@ import jakarta.validation.constraints.Size;
 public record TaskRequest(
 
         @NotBlank(message = "Title is required")
-        @Size(max = 100, message = "Title must have at most 100 characters")
+        @Size(min = 3, max = 100, message = "Title must have between 3 and 100 characters")
         String title,
 
         @NotBlank(message = "Description is required")
-        @Size(max = 1000, message = "Description must have at most 1000 characters")
+        @Size(min = 3, max = 1000, message = "Description must have between 3 and 1000 characters")
         String description,
 
         @NotNull(message = "Deadline is required")
@@ -21,4 +21,9 @@ public record TaskRequest(
         @Max(value = 3650, message = "Deadline must be at most 3650 days")
         Integer deadlineInDays
 )
-{}
+{
+    public TaskRequest {
+        if (title != null) title = title.strip();
+        if (description != null) description = description.strip();
+    }
+}

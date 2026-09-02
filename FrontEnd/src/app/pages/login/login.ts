@@ -29,9 +29,16 @@ export class LoginPage {
   form = new FormGroup({
     email: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.email],
+      validators: [Validators.required, Validators.email, Validators.maxLength(254)],
     }),
-    password: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    password: new FormControl('', {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+        Validators.maxLength(72),
+        Validators.pattern(/\S/),
+      ],
+    }),
   });
 
   constructor(
@@ -45,6 +52,8 @@ export class LoginPage {
     if (this.loading) {
       return;
     }
+    this.errorMessage = '';
+    this.form.controls.email.setValue(this.form.controls.email.value.trim());
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;

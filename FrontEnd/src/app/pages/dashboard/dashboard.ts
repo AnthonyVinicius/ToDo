@@ -45,11 +45,21 @@ export class DashboardPage implements OnInit {
   form = new FormGroup({
     title: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.maxLength(100), Validators.pattern(/\S/)],
+      validators: [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(100),
+        Validators.pattern(/\S/),
+      ],
     }),
     description: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.maxLength(1000), Validators.pattern(/\S/)],
+      validators: [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(1000),
+        Validators.pattern(/\S/),
+      ],
     }),
     deadlineInDays: new FormControl(3, {
       nonNullable: true,
@@ -131,6 +141,10 @@ export class DashboardPage implements OnInit {
 
   saveTask(): void {
     if (this.loading || this.saving || this.busyTaskId) return;
+    this.form.patchValue({
+      title: this.form.controls.title.value.trim(),
+      description: this.form.controls.description.value.trim(),
+    });
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
