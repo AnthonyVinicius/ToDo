@@ -19,30 +19,61 @@
       <h2>Crie sua conta</h2>
       <p class="subtitle">Preencha os dados abaixo para se cadastrar.</p>
 
-      <form>
+      <form [formGroup]="form" (ngSubmit)="submit()">
         <mat-form-field appearance="outline"
           ><mat-label>Nome</mat-label><mat-icon matPrefix>person_outline</mat-icon
-          ><input matInput autocomplete="name"
-        /></mat-form-field>
+          ><input matInput formControlName="username" autocomplete="name" />
+          @if (form.controls.username.touched && form.controls.username.invalid) {
+            <mat-error>O nome deve ter entre 3 e 50 caracteres.</mat-error>
+          }
+        </mat-form-field>
         <mat-form-field appearance="outline"
           ><mat-label>E-mail</mat-label><mat-icon matPrefix>mail_outline</mat-icon
-          ><input matInput type="email" autocomplete="email"
-        /></mat-form-field>
+          ><input matInput formControlName="email" type="email" autocomplete="email" />
+          @if (form.controls.email.touched && form.controls.email.invalid) {
+            <mat-error>Informe um e-mail válido.</mat-error>
+          }
+        </mat-form-field>
         <mat-form-field appearance="outline"
           ><mat-label>Senha</mat-label><mat-icon matPrefix>lock_outline</mat-icon
-          ><input matInput type="password" autocomplete="new-password" /><button
+          ><input
+            matInput
+            formControlName="password"
+            [type]="hidePassword ? 'password' : 'text'"
+            autocomplete="new-password"
+          /><button
             mat-icon-button
             matSuffix
             type="button"
+            (click)="hidePassword = !hidePassword"
+            [attr.aria-label]="hidePassword ? 'Mostrar senha' : 'Ocultar senha'"
           >
-            <mat-icon>visibility_off</mat-icon>
-          </button></mat-form-field
-        >
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (form.controls.password.touched && form.controls.password.invalid) {
+            <mat-error>A senha deve ter pelo menos 8 caracteres.</mat-error>
+          }
+        </mat-form-field>
         <mat-form-field appearance="outline"
           ><mat-label>Confirmar senha</mat-label><mat-icon matPrefix>lock_reset</mat-icon
-          ><input matInput type="password" autocomplete="new-password"
-        /></mat-form-field>
-        <a mat-flat-button class="primary-action" routerLink="/dashboard">Criar conta</a>
+          ><input
+            matInput
+            formControlName="confirmPassword"
+            type="password"
+            autocomplete="new-password"
+          />
+          @if (form.controls.confirmPassword.touched && form.controls.confirmPassword.invalid) {
+            <mat-error>Confirme sua senha.</mat-error>
+          }
+        </mat-form-field>
+        @if (errorMessage) {
+          <p class="form-error" role="alert">
+            <mat-icon>error_outline</mat-icon>{{ errorMessage }}
+          </p>
+        }
+        <button mat-flat-button class="primary-action" type="submit" [disabled]="loading">
+          {{ loading ? 'Criando conta...' : 'Criar conta' }}
+        </button>
       </form>
       <p class="switch-auth">Já possui uma conta? <a routerLink="/login">Entrar</a></p>
     </div>

@@ -6,10 +6,14 @@
     >
     <div class="topbar-actions">
       <div class="profile-button">
-        <span class="avatar">U</span>
-        <span class="profile-copy"><strong>Usuário</strong><small>usuario@email.com</small></span>
+        <span class="avatar">{{ user?.name?.charAt(0)?.toUpperCase() || 'U' }}</span>
+        <span class="profile-copy"
+          ><strong>{{ user?.name || 'Usuário' }}</strong></span
+        >
       </div>
-      <a mat-icon-button routerLink="/login" aria-label="Sair"><mat-icon>logout</mat-icon></a>
+      <button mat-icon-button type="button" aria-label="Sair" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+      </button>
     </div>
   </header>
 
@@ -17,7 +21,7 @@
     <section class="welcome-row">
       <div>
         <p class="date-label">Dashboard</p>
-        <h1>Olá, Usuário</h1>
+        <h1>Olá, {{ user?.name || 'Usuário' }}</h1>
         <p>Visualize e gerencie suas tarefas.</p>
       </div>
       <button mat-flat-button class="new-task"><mat-icon>add</mat-icon>Nova tarefa</button>
