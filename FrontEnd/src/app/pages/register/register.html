@@ -22,16 +22,28 @@
       <form [formGroup]="form" (ngSubmit)="submit()">
         <mat-form-field appearance="outline"
           ><mat-label>Nome</mat-label><mat-icon matPrefix>person_outline</mat-icon
-          ><input matInput formControlName="username" autocomplete="name" />
+          ><input
+            matInput
+            formControlName="username"
+            autocomplete="name"
+            minlength="3"
+            maxlength="50"
+          />
           @if (form.controls.username.touched && form.controls.username.invalid) {
             <mat-error>O nome deve ter entre 3 e 50 caracteres.</mat-error>
           }
         </mat-form-field>
         <mat-form-field appearance="outline"
           ><mat-label>E-mail</mat-label><mat-icon matPrefix>mail_outline</mat-icon
-          ><input matInput formControlName="email" type="email" autocomplete="email" />
+          ><input
+            matInput
+            formControlName="email"
+            type="email"
+            autocomplete="email"
+            maxlength="254"
+          />
           @if (form.controls.email.touched && form.controls.email.invalid) {
-            <mat-error>Informe um e-mail válido.</mat-error>
+            <mat-error>Informe um e-mail válido com até 254 caracteres.</mat-error>
           }
         </mat-form-field>
         <mat-form-field appearance="outline"
@@ -51,7 +63,9 @@
             <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
           @if (form.controls.password.touched && form.controls.password.invalid) {
-            <mat-error>A senha deve ter pelo menos 8 caracteres.</mat-error>
+            <mat-error
+              >Use entre 8 e 72 caracteres, sem ser só espaços.</mat-error
+            >
           }
         </mat-form-field>
         <mat-form-field appearance="outline"
@@ -63,7 +77,7 @@
             autocomplete="new-password"
           />
           @if (form.controls.confirmPassword.touched && form.controls.confirmPassword.invalid) {
-            <mat-error>Confirme sua senha.</mat-error>
+            <mat-error>Confirme sua senha, respeitando o limite de 72 caracteres.</mat-error>
           }
         </mat-form-field>
         @if (errorMessage) {

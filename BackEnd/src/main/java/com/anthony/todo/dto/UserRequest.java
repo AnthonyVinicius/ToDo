@@ -12,10 +12,17 @@ public record UserRequest(
 
         @NotBlank(message = "Email is required")
         @Email(message = "Email must be valid")
+        @Size(max = 254, message = "Email must have at most 254 characters")
         String email,
 
         @NotBlank(message = "Password is required")
-        @Size(min = 8, message = "Password must have at least 8 characters")
+        @Size(min = 8, max = 72, message = "Password must have between 8 and 72 characters")
         String password
 )
-{}
+{
+    public UserRequest {
+        if (username != null) username = username.strip();
+        if (email != null) email = email.strip();
+    }
+
+}

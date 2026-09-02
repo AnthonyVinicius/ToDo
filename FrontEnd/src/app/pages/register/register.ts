@@ -30,17 +30,30 @@ export class RegisterPage {
   form = new FormGroup({
     username: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.minLength(3), Validators.maxLength(50)],
+      validators: [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(50),
+        Validators.pattern(/\S/),
+      ],
     }),
     email: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.email],
+      validators: [Validators.required, Validators.email, Validators.maxLength(254)],
     }),
     password: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.minLength(8)],
+      validators: [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.maxLength(72),
+        Validators.pattern(/\S/),
+      ],
     }),
-    confirmPassword: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    confirmPassword: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(72)],
+    }),
   });
 
   constructor(
@@ -53,6 +66,11 @@ export class RegisterPage {
     if (this.loading) {
       return;
     }
+    this.errorMessage = '';
+    this.form.patchValue({
+      username: this.form.controls.username.value.trim(),
+      email: this.form.controls.email.value.trim(),
+    });
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -76,7 +94,8 @@ export class RegisterPage {
           if (error.status === 409) {
             this.errorMessage = 'Este e-mail já está cadastrado.';
           } else {
-            this.errorMessage = 'Não foi possível concluir o cadastro. Se a conta já foi criada, tente entrar.';
+            this.errorMessage =
+              'Não foi possível concluir o cadastro. Se a conta já foi criada, tente entrar.';
           }
           this.loading = false;
           // Atualiza a tela após a resposta da API no Angular sem Zone.js.

@@ -27,10 +27,11 @@
             formControlName="email"
             type="email"
             autocomplete="email"
+            maxlength="254"
             placeholder="voce@exemplo.com"
           />
           @if (form.controls.email.touched && form.controls.email.invalid) {
-            <mat-error>Informe um e-mail válido.</mat-error>
+            <mat-error>Informe um e-mail válido com até 254 caracteres.</mat-error>
           }
         </mat-form-field>
 
@@ -52,7 +53,7 @@
             <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
           @if (form.controls.password.touched && form.controls.password.invalid) {
-            <mat-error>Informe sua senha.</mat-error>
+            <mat-error>Informe uma senha que não seja só espaços e tenha até 72 caracteres.</mat-error>
           }
         </mat-form-field>
 
