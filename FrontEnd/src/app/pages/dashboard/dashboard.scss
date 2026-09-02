@@ -247,6 +247,76 @@
   box-shadow: 0 14px 35px rgba(24, 57, 62, 0.075);
 }
 
+.message,
+.empty-state,
+.task-form {
+  padding: 20px;
+  border-radius: 14px;
+  background: white;
+  margin: 0 0 24px;
+}
+.message.error {
+  background: #fff0f1;
+  color: #a73543;
+}
+.message.success {
+  background: #daf5e9;
+  color: #087759;
+}
+.empty-state {
+  grid-column: 1 / -1;
+}
+.task-form form {
+  display: grid;
+  gap: 12px;
+}
+.task-form h2 {
+  margin-top: 0;
+}
+.form-actions,
+.card-actions,
+.status-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.form-actions {
+  margin-top: 12px;
+}
+.task-card h3 {
+  margin: 0 0 12px;
+  overflow-wrap: anywhere;
+}
+.task-description {
+  flex: 1;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+.task-date {
+  font-size: 0.8rem;
+  color: #526e73;
+}
+.status-actions {
+  border-block: 1px solid #e4eceb;
+  padding: 10px 0;
+}
+.status-actions button[aria-pressed='true'] {
+  background: #daf5e9;
+  color: #087759;
+}
+.card-actions {
+  margin-top: 8px;
+}
+.delete-button {
+  color: #a73543 !important;
+}
+.delete-confirmation {
+  padding: 10px;
+  background: #fff0f1;
+  border-radius: 10px;
+}
+
 @media (max-width: 1050px) {
   .task-grid {
     grid-template-columns: repeat(2, 1fr);

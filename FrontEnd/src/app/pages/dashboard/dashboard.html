@@ -24,41 +24,221 @@
         <h1>Olá, {{ user?.name || 'Usuário' }}</h1>
         <p>Visualize e gerencie suas tarefas.</p>
       </div>
-      <button mat-flat-button class="new-task"><mat-icon>add</mat-icon>Nova tarefa</button>
+      <button
+        mat-flat-button
+        class="new-task"
+        (click)="openForm()"
+        [disabled]="loading || saving || busyTaskId !== null"
+      >
+        <mat-icon>add</mat-icon>Nova tarefa
+      </button>
     </section>
 
     <section class="summary-grid" aria-label="Resumo das tarefas">
       <article class="summary-card total">
         <div class="summary-icon"><mat-icon>view_list</mat-icon></div>
-        <div><strong>3</strong><span>Total de tarefas</span></div>
+        <div>
+          <strong>{{ tasks.length }}</strong
+          ><span>Total de tarefas</span>
+        </div>
       </article>
       <article class="summary-card pending">
         <div class="summary-icon"><mat-icon>schedule</mat-icon></div>
-        <div><strong>1</strong><span>Pendentes</span></div>
+        <div>
+          <strong>{{ countTasks('PENDING') }}</strong
+          ><span>Pendentes</span>
+        </div>
       </article>
       <article class="summary-card progress">
         <div class="summary-icon"><mat-icon>pending_actions</mat-icon></div>
-        <div><strong>1</strong><span>Em andamento</span></div>
+        <div>
+          <strong>{{ countTasks('IN_PROGRESS') }}</strong
+          ><span>Em andamento</span>
+        </div>
       </article>
       <article class="summary-card completed">
         <div class="summary-icon"><mat-icon>task_alt</mat-icon></div>
-        <div><strong>1</strong><span>Concluídas</span></div>
+        <div>
+          <strong>{{ countTasks('COMPLETED') }}</strong
+          ><span>Concluídas</span>
+        </div>
       </article>
     </section>
 
-    <section class="tasks-section">
+    @if (errorMessage) {
+      <p class="message error" role="alert">{{ errorMessage }}</p>
+    }
+    @if (successMessage) {
+      <p class="message success" role="status">{{ successMessage }}</p>
+    }
+
+    @if (showForm) {
+      <section class="task-form" aria-labelledby="task-form-title">
+        <h2 id="task-form-title">{{ editingId ? 'Editar tarefa' : 'Nova tarefa' }}</h2>
+        <form [formGroup]="form" (ngSubmit)="saveTask()">
+          <mat-form-field appearance="outline">
+            <mat-label>Título</mat-label>
+            <input matInput formControlName="title" maxlength="100" />
+            <mat-error>Informe um título de até 100 caracteres.</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Descrição</mat-label>
+            <textarea matInput formControlName="description" rows="3" maxlength="1000"></textarea>
+            <mat-error>Informe uma descrição de até 1000 caracteres.</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Prazo em dias</mat-label>
+            <input
+              matInput
+              formControlName="deadlineInDays"
+              type="number"
+              min="1"
+              max="3650"
+              step="1"
+            />
+            <mat-hint>Contado a partir da criação da tarefa.</mat-hint>
+            <mat-error>Informe um número inteiro entre 1 e 3650.</mat-error>
+          </mat-form-field>
+          <div class="form-actions">
+            <button mat-flat-button type="submit" [disabled]="saving">
+              {{ saving ? 'Salvando...' : 'Salvar tarefa' }}
+            </button>
+            <button mat-button type="button" (click)="closeForm()" [disabled]="saving">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </section>
+    }
+
+    <section class="tasks-section" [attr.aria-busy]="loading">
       <div class="section-header">
-        <div><h2>Minhas tarefas</h2></div>
+        <div>
+          <h2>Minhas tarefas</h2>
+          <button
+            mat-button
+            (click)="loadTasks()"
+            [disabled]="loading || saving || busyTaskId !== null"
+          >
+            Atualizar lista
+          </button>
+        </div>
         <nav class="filters" aria-label="Filtrar tarefas">
-          <button class="active">Todas <span>3</span></button>
-          <button>Pendentes</button>
-          <button>Em andamento</button>
-          <button>Concluídas</button>
+          <button
+            [class.active]="filter === 'ALL'"
+            [attr.aria-pressed]="filter === 'ALL'"
+            (click)="filter = 'ALL'"
+          >
+            Todas <span>{{ tasks.length }}</span>
+          </button>
+          <button
+            [class.active]="filter === 'PENDING'"
+            [attr.aria-pressed]="filter === 'PENDING'"
+            (click)="filter = 'PENDING'"
+          >
+            Pendentes
+          </button>
+          <button
+            [class.active]="filter === 'IN_PROGRESS'"
+            [attr.aria-pressed]="filter === 'IN_PROGRESS'"
+            (click)="filter = 'IN_PROGRESS'"
+          >
+            Em andamento
+          </button>
+          <button
+            [class.active]="filter === 'COMPLETED'"
+            [attr.aria-pressed]="filter === 'COMPLETED'"
+            (click)="filter = 'COMPLETED'"
+          >
+            Concluídas
+          </button>
         </nav>
       </div>
-      <div class="task-grid">
-        <article class="task-card"></article>
-      </div>
+      @if (loading) {
+        <p class="empty-state" role="status">Carregando tarefas...</p>
+      } @else {
+        <div class="task-grid">
+          @for (task of filteredTasks; track task.uuid) {
+            <article class="task-card" [attr.aria-busy]="busyTaskId === task.uuid">
+              <h3>{{ task.title }}</h3>
+              <p class="task-description">{{ task.description }}</p>
+              <p class="task-date">Entrega: {{ task.dueAt | date: 'dd/MM/yyyy HH:mm' }}</p>
+              <div class="status-actions" aria-label="Alterar status">
+                <button
+                  mat-button
+                  [disabled]="saving || busyTaskId !== null || task.status === 'PENDING'"
+                  (click)="changeStatus(task, 'PENDING')"
+                  [attr.aria-pressed]="task.status === 'PENDING'"
+                >
+                  Pendente
+                </button>
+                <button
+                  mat-button
+                  [disabled]="saving || busyTaskId !== null || task.status === 'IN_PROGRESS'"
+                  (click)="changeStatus(task, 'IN_PROGRESS')"
+                  [attr.aria-pressed]="task.status === 'IN_PROGRESS'"
+                >
+                  Em andamento
+                </button>
+                <button
+                  mat-button
+                  [disabled]="saving || busyTaskId !== null || task.status === 'COMPLETED'"
+                  (click)="changeStatus(task, 'COMPLETED')"
+                  [attr.aria-pressed]="task.status === 'COMPLETED'"
+                >
+                  Concluída
+                </button>
+              </div>
+              <div class="card-actions">
+                <button
+                  mat-button
+                  (click)="openForm(task)"
+                  [disabled]="saving || busyTaskId !== null"
+                >
+                  Editar
+                </button>
+                <button
+                  mat-button
+                  class="delete-button"
+                  (click)="deleteId = task.uuid"
+                  [disabled]="saving || busyTaskId !== null"
+                >
+                  Excluir
+                </button>
+              </div>
+              @if (deleteId === task.uuid) {
+                <div class="delete-confirmation">
+                  <p>Excluir esta tarefa? Esta ação não pode ser desfeita.</p>
+                  <button
+                    mat-button
+                    class="delete-button"
+                    (click)="deleteTask(task)"
+                    [disabled]="saving || busyTaskId !== null"
+                  >
+                    Confirmar exclusão
+                  </button>
+                  <button mat-button (click)="deleteId = null" [disabled]="busyTaskId !== null">
+                    Cancelar
+                  </button>
+                </div>
+              }
+              @if (busyTaskId === task.uuid) {
+                <p role="status">Aguarde...</p>
+              }
+            </article>
+          } @empty {
+            @if (!errorMessage) {
+              <p class="empty-state">
+                {{
+                  tasks.length === 0
+                    ? 'Você ainda não tem tarefas. Clique em Nova tarefa para começar.'
+                    : 'Nenhuma tarefa neste filtro.'
+                }}
+              </p>
+            }
+          }
+        </div>
+      }
     </section>
   </main>
 </div>
