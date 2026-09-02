@@ -26,22 +26,17 @@ public class JwtService {
         this.expirationMs = expirationMs;
     }
 
-    public String generateToken(UUID userId, String userName, String role) {
+    public String generateToken(UUID userId, String userName) {
         Date issuedAt = new Date();
         Date expiresAt = new Date(issuedAt.getTime() + expirationMs);
 
         return Jwts.builder()
                 .subject(userId.toString())
                 .claim("name", userName)
-                .claim("role", role)
                 .issuedAt(issuedAt)
                 .expiration(expiresAt)
                 .signWith(key)
                 .compact();
-    }
-
-    public String generateToken(UUID userId, String userName) {
-        return generateToken(userId, userName, "USER");
     }
 
     public UUID extractUserId(String token) {
@@ -52,16 +47,11 @@ public class JwtService {
         return getClaims(token).get("name", String.class);
     }
 
-    public String extractRole(String token) {
-        return getClaims(token).get("role", String.class);
-    }
-
     public boolean isTokenValid(String token) {
         try {
             Claims claims = getClaims(token);
             return claims.getSubject() != null
-                    && claims.get("name") != null
-                    && claims.get("role") != null;
+                    && claims.get("name") != null;
         } catch (Exception ex) {
             return false;
         }

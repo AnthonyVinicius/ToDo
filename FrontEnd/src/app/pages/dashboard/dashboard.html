@@ -1,0 +1,64 @@
+<div class="dashboard-shell">
+  <header class="topbar">
+    <a class="brand" routerLink="/dashboard"
+      ><span class="brand-mark"><mat-icon>check</mat-icon></span
+      ><span>TO DO</span></a
+    >
+    <div class="topbar-actions">
+      <div class="profile-button">
+        <span class="avatar">{{ user?.name?.charAt(0)?.toUpperCase() || 'U' }}</span>
+        <span class="profile-copy"
+          ><strong>{{ user?.name || 'Usuário' }}</strong></span
+        >
+      </div>
+      <button mat-icon-button type="button" aria-label="Sair" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <main class="dashboard-content">
+    <section class="welcome-row">
+      <div>
+        <p class="date-label">Dashboard</p>
+        <h1>Olá, {{ user?.name || 'Usuário' }}</h1>
+        <p>Visualize e gerencie suas tarefas.</p>
+      </div>
+      <button mat-flat-button class="new-task"><mat-icon>add</mat-icon>Nova tarefa</button>
+    </section>
+
+    <section class="summary-grid" aria-label="Resumo das tarefas">
+      <article class="summary-card total">
+        <div class="summary-icon"><mat-icon>view_list</mat-icon></div>
+        <div><strong>3</strong><span>Total de tarefas</span></div>
+      </article>
+      <article class="summary-card pending">
+        <div class="summary-icon"><mat-icon>schedule</mat-icon></div>
+        <div><strong>1</strong><span>Pendentes</span></div>
+      </article>
+      <article class="summary-card progress">
+        <div class="summary-icon"><mat-icon>pending_actions</mat-icon></div>
+        <div><strong>1</strong><span>Em andamento</span></div>
+      </article>
+      <article class="summary-card completed">
+        <div class="summary-icon"><mat-icon>task_alt</mat-icon></div>
+        <div><strong>1</strong><span>Concluídas</span></div>
+      </article>
+    </section>
+
+    <section class="tasks-section">
+      <div class="section-header">
+        <div><h2>Minhas tarefas</h2></div>
+        <nav class="filters" aria-label="Filtrar tarefas">
+          <button class="active">Todas <span>3</span></button>
+          <button>Pendentes</button>
+          <button>Em andamento</button>
+          <button>Concluídas</button>
+        </nav>
+      </div>
+      <div class="task-grid">
+        <article class="task-card"></article>
+      </div>
+    </section>
+  </main>
+</div>

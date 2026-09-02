@@ -48,6 +48,29 @@ nbdist/
 # VS Code
 .vscode/
 
+# Angular and Node.js
+node_modules/
+dist/
+tmp/
+out-tsc/
+bazel-out/
+.angular/
+coverage/
+.sass-cache/
+.c9/
+.history/
+typings/
+__screenshots__/
+connect.lock
+npm-debug.log*
+yarn-error.log*
+libpeerconnection.log
+testem.log
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
 # Local environment files
 .env
 .env.*
