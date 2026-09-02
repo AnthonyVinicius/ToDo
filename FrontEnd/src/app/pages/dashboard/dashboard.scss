@@ -247,6 +247,124 @@
   box-shadow: 0 14px 35px rgba(24, 57, 62, 0.075);
 }
 
+.message,
+.empty-state,
+.task-form {
+  padding: 20px;
+  border-radius: 14px;
+  background: white;
+  margin: 0 0 24px;
+}
+.message.error {
+  background: #fff0f1;
+  color: #a73543;
+}
+.message.success {
+  background: #daf5e9;
+  color: #087759;
+}
+.empty-state {
+  grid-column: 1 / -1;
+}
+.task-form form {
+  display: grid;
+  gap: 12px;
+}
+.task-form h2 {
+  margin-top: 0;
+}
+.form-actions,
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.form-actions {
+  margin-top: 12px;
+}
+.task-card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.task-description {
+  flex: 1;
+  margin: 18px 0 24px;
+  font-size: 0.9rem;
+  color: #526e73;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+.task-date {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  font-size: 0.8rem;
+  color: #526e73;
+}
+.task-date span,
+.task-date time {
+  display: block;
+}
+.task-date time {
+  margin-top: 3px;
+  font-weight: 600;
+  color: #18383e;
+}
+.card-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+.status-badge {
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: #fff2d8;
+  color: #8c5700;
+  font-size: 0.73rem;
+  font-weight: 600;
+}
+.status-badge.in-progress {
+  background: #e4efff;
+  color: #2868a9;
+}
+.status-badge.completed {
+  background: #daf5e9;
+  color: #087759;
+}
+.card-actions {
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0;
+}
+.card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid #e4eceb;
+  padding-top: 18px;
+}
+.status-field {
+  flex: 1 1 145px;
+  min-width: 0;
+  font-size: 0.8rem;
+}
+.delete-button {
+  color: #a73543 !important;
+}
+.delete-confirmation {
+  margin-top: 16px;
+  padding: 10px;
+  background: #fff0f1;
+  border-radius: 10px;
+}
+
 @media (max-width: 1050px) {
   .task-grid {
     grid-template-columns: repeat(2, 1fr);

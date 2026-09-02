@@ -41,6 +41,11 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{uuid}")
+    public TaskResponse updateTask(@PathVariable UUID uuid, @Valid @RequestBody TaskRequest request) {
+        return taskService.updateTask(uuid, request);
+    }
+
     @PatchMapping("/{uuid}/status")
     public TaskResponse updateStatus(@PathVariable UUID uuid,
                                      @Valid @RequestBody UpdateTaskStatusRequest request) {

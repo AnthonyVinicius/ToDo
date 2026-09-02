@@ -58,6 +58,16 @@ public class TaskService {
     }
 
     @Transactional
+    public TaskResponse updateTask(UUID uuid, TaskRequest request) {
+        Task task = findOwnedTaskById(uuid);
+        task.setTitle(request.title());
+        task.setDescription(request.description());
+        // O prazo continua sendo contado a partir da criação da tarefa.
+        task.setDueAt(task.getCreatedAt().plusDays(request.deadlineInDays()));
+        return mapper.toDTO(task);
+    }
+
+    @Transactional
     public TaskResponse updateStatus(UUID uuid, UpdateTaskStatusRequest request) {
         Task task = findOwnedTaskById(uuid);
         task.setStatus(request.status());
