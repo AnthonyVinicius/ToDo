@@ -160,52 +160,70 @@
         <div class="task-grid">
           @for (task of filteredTasks; track task.uuid) {
             <article class="task-card" [attr.aria-busy]="busyTaskId === task.uuid">
-              <h3>{{ task.title }}</h3>
+              <div class="card-heading">
+                <h3>{{ task.title }}</h3>
+                <span
+                  class="status-badge"
+                  [class.in-progress]="task.status === 'IN_PROGRESS'"
+                  [class.completed]="task.status === 'COMPLETED'"
+                >
+                  @switch (task.status) {
+                    @case ('PENDING') {
+                      Pendente
+                    }
+                    @case ('IN_PROGRESS') {
+                      Em andamento
+                    }
+                    @case ('COMPLETED') {
+                      Concluída
+                    }
+                  }
+                </span>
+              </div>
               <p class="task-description">{{ task.description }}</p>
-              <p class="task-date">Entrega: {{ task.dueAt | date: 'dd/MM/yyyy HH:mm' }}</p>
-              <div class="status-actions" aria-label="Alterar status">
-                <button
-                  mat-button
-                  [disabled]="saving || busyTaskId !== null || task.status === 'PENDING'"
-                  (click)="changeStatus(task, 'PENDING')"
-                  [attr.aria-pressed]="task.status === 'PENDING'"
-                >
-                  Pendente
-                </button>
-                <button
-                  mat-button
-                  [disabled]="saving || busyTaskId !== null || task.status === 'IN_PROGRESS'"
-                  (click)="changeStatus(task, 'IN_PROGRESS')"
-                  [attr.aria-pressed]="task.status === 'IN_PROGRESS'"
-                >
-                  Em andamento
-                </button>
-                <button
-                  mat-button
-                  [disabled]="saving || busyTaskId !== null || task.status === 'COMPLETED'"
-                  (click)="changeStatus(task, 'COMPLETED')"
-                  [attr.aria-pressed]="task.status === 'COMPLETED'"
-                >
-                  Concluída
-                </button>
+              <div class="task-date">
+                <mat-icon aria-hidden="true">event</mat-icon>
+                <div>
+                  <span>Entrega</span><time>{{ task.dueAt | date: 'dd/MM/yyyy HH:mm' }}</time>
+                </div>
               </div>
-              <div class="card-actions">
-                <button
-                  mat-button
-                  (click)="openForm(task)"
-                  [disabled]="saving || busyTaskId !== null"
-                >
-                  Editar
-                </button>
-                <button
-                  mat-button
-                  class="delete-button"
-                  (click)="deleteId = task.uuid"
-                  [disabled]="saving || busyTaskId !== null"
-                >
-                  Excluir
-                </button>
-              </div>
+              <footer class="card-footer">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="status-field">
+                  <mat-label>Status</mat-label>
+                  <mat-select
+                    #statusSelect
+                    [value]="task.status"
+                    [disabled]="saving || busyTaskId !== null"
+                    (selectionChange)="
+                      changeStatus(task, $event.value); statusSelect.value = task.status
+                    "
+                    [attr.aria-label]="'Status de ' + task.title"
+                  >
+                    <mat-option value="PENDING">Pendente</mat-option>
+                    <mat-option value="IN_PROGRESS">Em andamento</mat-option>
+                    <mat-option value="COMPLETED">Concluída</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <div class="card-actions">
+                  <button
+                    mat-button
+                    (click)="openForm(task)"
+                    [disabled]="saving || busyTaskId !== null"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    mat-icon-button
+                    class="delete-button"
+                    [attr.aria-label]="'Excluir tarefa ' + task.title"
+                    title="Excluir tarefa"
+                    (click)="deleteId = task.uuid"
+                    [disabled]="saving || busyTaskId !== null"
+                  >
+                    <mat-icon>delete_outline</mat-icon>
+                  </button>
+                </div>
+              </footer>
               @if (deleteId === task.uuid) {
                 <div class="delete-confirmation">
                   <p>Excluir esta tarefa? Esta ação não pode ser desfeita.</p>

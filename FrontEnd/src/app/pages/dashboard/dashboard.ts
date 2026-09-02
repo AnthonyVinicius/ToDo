@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 
 import { AuthService } from '../../services/auth.service';
 import { AuthUser } from '../../models/auth.models';
@@ -23,6 +24,7 @@ import { TaskService } from '../../services/task.service';
     MatIconModule,
     MatInputModule,
     MatFormFieldModule,
+    MatSelectModule,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
@@ -88,6 +90,8 @@ export class DashboardPage implements OnInit {
     if (this.loading || this.saving || this.busyTaskId) return;
     this.loading = true;
     this.errorMessage = '';
+    this.successMessage = '';
+
     this.taskService.getTasks().subscribe({
       next: (tasks) => {
         this.tasks = tasks;
@@ -100,14 +104,13 @@ export class DashboardPage implements OnInit {
   }
 
   openForm(task?: Task): void {
-    if (this.saving || this.busyTaskId) return;
+    if (this.loading || this.saving || this.busyTaskId) return;
     this.editingId = task ? task.uuid : null;
     this.errorMessage = '';
     this.successMessage = '';
     this.deleteId = null;
     this.form.reset({ title: '', description: '', deadlineInDays: 3 });
     if (task) {
-      // Usa UTC apenas no cálculo para manter o número de dias, mesmo na mudança de horário de verão.
       const days = Math.round(
         (Date.parse(task.dueAt + 'Z') - Date.parse(task.createdAt + 'Z')) / 86400000,
       );
@@ -127,7 +130,7 @@ export class DashboardPage implements OnInit {
   }
 
   saveTask(): void {
-    if (this.saving || this.busyTaskId) return;
+    if (this.loading || this.saving || this.busyTaskId) return;
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -165,14 +168,14 @@ export class DashboardPage implements OnInit {
   }
 
   changeStatus(task: Task, status: TaskStatus): void {
-    if (this.busyTaskId || this.saving || status === task.status) return;
+    if (this.loading || this.saving || this.busyTaskId || task.status === status) return;
     this.busyTaskId = task.uuid;
     this.errorMessage = '';
     this.successMessage = '';
     this.taskService.updateStatus(task.uuid, status).subscribe({
-      next: (updated) => {
-        this.tasks = this.tasks.map((item) => (item.uuid === updated.uuid ? updated : item));
+      next: () => {
         this.busyTaskId = null;
+        this.loadTasks();
         this.successMessage = 'Status atualizado.';
         this.changeDetector.markForCheck();
       },
@@ -182,7 +185,7 @@ export class DashboardPage implements OnInit {
   }
 
   deleteTask(task: Task): void {
-    if (this.busyTaskId || this.saving || this.deleteId !== task.uuid) return;
+    if (this.loading || this.saving || this.busyTaskId || this.deleteId !== task.uuid) return;
     this.busyTaskId = task.uuid;
     this.errorMessage = '';
     this.successMessage = '';
@@ -205,6 +208,7 @@ export class DashboardPage implements OnInit {
     this.saving = false;
     this.busyTaskId = null;
     this.errorMessage = message;
+    this.successMessage = '';
     if (error.status === 401) this.logout();
     this.changeDetector.markForCheck();
   }

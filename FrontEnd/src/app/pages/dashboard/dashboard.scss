@@ -274,8 +274,7 @@
   margin-top: 0;
 }
 .form-actions,
-.card-actions,
-.status-actions {
+.card-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -284,34 +283,83 @@
   margin-top: 12px;
 }
 .task-card h3 {
-  margin: 0 0 12px;
+  margin: 0;
+  font-size: 1.1rem;
+  line-height: 1.4;
   overflow-wrap: anywhere;
 }
 .task-description {
   flex: 1;
+  margin: 18px 0 24px;
+  font-size: 0.9rem;
+  color: #526e73;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   line-height: 1.6;
 }
 .task-date {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
   font-size: 0.8rem;
   color: #526e73;
 }
-.status-actions {
-  border-block: 1px solid #e4eceb;
-  padding: 10px 0;
+.task-date span,
+.task-date time {
+  display: block;
 }
-.status-actions button[aria-pressed='true'] {
+.task-date time {
+  margin-top: 3px;
+  font-weight: 600;
+  color: #18383e;
+}
+.card-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+.status-badge {
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: #fff2d8;
+  color: #8c5700;
+  font-size: 0.73rem;
+  font-weight: 600;
+}
+.status-badge.in-progress {
+  background: #e4efff;
+  color: #2868a9;
+}
+.status-badge.completed {
   background: #daf5e9;
   color: #087759;
 }
 .card-actions {
-  margin-top: 8px;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0;
+}
+.card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid #e4eceb;
+  padding-top: 18px;
+}
+.status-field {
+  flex: 1 1 145px;
+  min-width: 0;
+  font-size: 0.8rem;
 }
 .delete-button {
   color: #a73543 !important;
 }
 .delete-confirmation {
+  margin-top: 16px;
   padding: 10px;
   background: #fff0f1;
   border-radius: 10px;

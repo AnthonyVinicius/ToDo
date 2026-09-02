@@ -1,7 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { DashboardPage } from './dashboard';
 import { AuthService } from '../../services/auth.service';
 import { Task } from '../../models/task.models';
@@ -40,7 +40,13 @@ describe('DashboardPage', () => {
     await fixture.whenStable();
   });
 
-  afterEach(() => http.verify());
+  afterEach(() => {
+    try {
+      http.verify();
+    } finally {
+      TestBed.resetTestingModule();
+    }
+  });
 
   it('loads tasks and filters the list without changing totals', () => {
     expect(page.tasks.length).toBe(1);
@@ -94,6 +100,8 @@ describe('DashboardPage', () => {
     expect(request.request.body).toEqual({ status: 'COMPLETED' });
     expect(page.tasks[0].status).toBe('PENDING');
     request.flush({ ...task, status: 'COMPLETED' });
+    expect(page.loading).toBe(true);
+    http.expectOne('/api/tasks').flush([{ ...task, status: 'COMPLETED' }]);
     expect(page.countTasks('COMPLETED')).toBe(1);
     expect(page.busyTaskId).toBeNull();
   });
@@ -107,6 +115,82 @@ describe('DashboardPage', () => {
     expect(request.request.method).toBe('DELETE');
     request.flush(null);
     expect(page.tasks).toEqual([]);
+  });
+
+  it('blocks repeated status changes while updating and reloading', () => {
+    page.changeStatus(task, 'COMPLETED');
+    page.changeStatus(task, 'IN_PROGRESS');
+    const request = http.expectOne('/api/tasks/task-1/status');
+    expect(page.busyTaskId).toBe(task.uuid);
+    request.flush({ ...task, status: 'COMPLETED' });
+    page.changeStatus(task, 'IN_PROGRESS');
+    http.expectNone('/api/tasks/task-1/status');
+    http.expectOne('/api/tasks').flush([{ ...task, status: 'COMPLETED' }]);
+    expect(page.loading).toBe(false);
+  });
+
+  it('closes the editor after deleting its task and blocks repeated deletes', async () => {
+    page.openForm(task);
+    page.deleteId = task.uuid;
+    page.deleteTask(task);
+    page.deleteTask(task);
+    http.expectOne('/api/tasks/task-1').flush(null);
+    await fixture.whenStable();
+    expect(page.showForm).toBe(false);
+    expect(page.editingId).toBeNull();
+    expect(page.deleteId).toBeNull();
+    expect(page.busyTaskId).toBeNull();
+    expect(fixture.nativeElement.textContent).toContain('Tarefa excluída.');
+  });
+
+  it('clears old messages and renders loading errors', async () => {
+    page.successMessage = 'Mensagem antiga';
+    page.errorMessage = 'Erro antigo';
+    page.loadTasks();
+    expect(page.errorMessage).toBe('');
+    expect(page.successMessage).toBe('');
+    http.expectOne('/api/tasks').flush({}, { status: 500, statusText: 'Error' });
+    await fixture.whenStable();
+    expect(page.loading).toBe(false);
+    expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain(
+      'Não foi possível carregar',
+    );
+    page.loadTasks();
+    http.expectOne('/api/tasks').flush([task]);
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
+  });
+
+  it('unlocks status actions after an error and preserves the task', async () => {
+    page.changeStatus(task, 'COMPLETED');
+    http.expectOne('/api/tasks/task-1/status').flush({}, { status: 500, statusText: 'Error' });
+    await fixture.whenStable();
+    expect(page.busyTaskId).toBeNull();
+    expect(page.tasks[0].status).toBe('PENDING');
+    expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain(
+      'Não foi possível atualizar',
+    );
+  });
+
+  it('preserves the task and unlocks deletion after an error', async () => {
+    page.deleteId = task.uuid;
+    page.deleteTask(task);
+    http.expectOne('/api/tasks/task-1').flush({}, { status: 500, statusText: 'Error' });
+    await fixture.whenStable();
+    expect(page.busyTaskId).toBeNull();
+    expect(page.tasks).toEqual([task]);
+    expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain(
+      'Não foi possível excluir',
+    );
+  });
+
+  it('logs out when loading returns unauthorized', () => {
+    const router = TestBed.inject(Router);
+    const navigate = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+    page.loadTasks();
+    http.expectOne('/api/tasks').flush({}, { status: 401, statusText: 'Unauthorized' });
+    expect(TestBed.inject(AuthService).logout).toHaveBeenCalled();
+    expect(navigate).toHaveBeenCalledWith('/login');
   });
 
   it('preserves the form and shows an error when saving fails', async () => {
