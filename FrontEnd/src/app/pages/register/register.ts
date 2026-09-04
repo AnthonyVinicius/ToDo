@@ -86,7 +86,6 @@ export class RegisterPage {
     this.errorMessage = '';
     this.auth
       .register({ username, email, password })
-      // Após criar a conta, faz o login antes de abrir o dashboard.
       .pipe(switchMap(() => this.auth.login({ email, password })))
       .subscribe({
         next: () => void this.router.navigateByUrl('/dashboard'),
@@ -98,7 +97,6 @@ export class RegisterPage {
               'Não foi possível concluir o cadastro. Se a conta já foi criada, tente entrar.';
           }
           this.loading = false;
-          // Atualiza a tela após a resposta da API no Angular sem Zone.js.
           this.changeDetector.markForCheck();
         },
       });

@@ -31,7 +31,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                         .requestMatchers(
-                                // Ferramentas de demonstração local; não expor o H2 em produção.
                                 "/h2-console",
                                 "/h2-console/**",
                                 "/swagger-ui",
