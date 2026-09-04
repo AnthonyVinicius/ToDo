@@ -1,361 +1,219 @@
 # TO DO
 
-  
-
-Aplicação full stack de gerenciamento de tarefas, desenvolvida para um desafio técnico. Permite cadastrar uma conta, fazer login e gerenciar tarefas com título, descrição, prazo e status. Cada usuário acessa somente os próprios dados.
-
-  
+Aplicação full stack de gerenciamento de tarefas desenvolvida para um desafio técnico. Permite cadastrar uma conta, fazer login e gerenciar tarefas com título, descrição, prazo e status. Cada usuário acessa somente os próprios dados.
 
 ## Funcionalidades
 
-  
-
 - Cadastro com nome, e-mail e senha, com prevenção de e-mail duplicado.
-
 - Login com JWT e logout no frontend.
-
 - Criação, listagem, edição e exclusão de tarefas com confirmação.
-
 - Descrição completa exibida no card.
-
-- Status: pendente (`PENDING`), em andamento (`IN_PROGRESS`) e concluída (`COMPLETED`).
-
+- Status pendente, em andamento e concluído.
 - Filtros por status, contadores e mensagem para lista vazia.
-
 - Validação de entradas no frontend e no backend.
-
 - Layout responsivo com Angular Material.
-
-  
 
 ## Tecnologias e decisões técnicas
 
-  
-
 | Parte | Tecnologias | Finalidade |
+| --- | --- | --- |
+| Backend | Java 17 e Spring Boot 4.1.1 | Construção da API REST |
+| Persistência | Spring Data JPA e H2 | Acesso aos dados e execução local simples |
+| Segurança | Spring Security, JWT e BCrypt | Autenticação e armazenamento seguro das senhas |
+| Documentação | Swagger/OpenAPI | Consulta e teste dos endpoints |
+| Frontend | Angular 21, TypeScript e Angular Material | Interface, formulários e navegação |
+| Testes | JUnit, Mockito e Vitest | Validação dos comportamentos principais |
 
-| Backend | Java 17, Spring Boot 
+A aplicação foi organizada em controllers, services, repositories, DTOs e entidades no backend. No frontend, as páginas utilizam services para comunicação com a API, models para os dados, guard para navegação protegida e interceptor para envio do JWT.
 
-| Persistência | Spring Data JPA e H2
+O H2 foi escolhido para facilitar a execução do desafio sem exigir a instalação de um servidor de banco. Não há separação por roles: a autorização é baseada no usuário autenticado e na propriedade da tarefa.
 
-| Documentação da API | Swagger UI
-
-| Frontend | Angular 21, TypeScript 5.9 e Angular Material
-
-  
 ## Pré-requisitos
 
-  
 - Git.
-
-- JDK 17
-
+- JDK 17.
 - Node.js 22.12 ou superior da linha 22, ou Node.js 24.
-
-- npm 11, compatível com a versão instalada do Node.js.
-
+- npm 11 compatível com a versão instalada do Node.js.
 - Acesso à internet para baixar as dependências na primeira execução.
 
+Não é necessário instalar Maven ou Angular CLI globalmente.
 
 ## Executando localmente
 
-  
-
 ### 1. Clonar o projeto
 
-  
-
 ```bash
-
-git  clone  https://github.com/AnthonyVinicius/ToDo.git
-
-cd  ToDo
-
+git clone https://github.com/AnthonyVinicius/ToDo.git
+cd ToDo
 ```
-
-  
 
 ### 2. Configurar o backend
 
-  
-
-Entre na pasta `BackEnd`:
-
-  
-
 ```bash
-
-cd  BackEnd
-
+cd BackEnd
 ```
-
-  
 
 Crie o arquivo local de configuração a partir do exemplo.
 
-  
-
 No Windows/PowerShell:
 
-  
-
 ```powershell
-
 Copy-Item .env.example .env
-
 ```
-
-  
 
 No Linux/macOS:
 
-  
-
 ```bash
-
-cp  .env.example  .env
-
+cp .env.example .env
 ```
 
-  
-
-Abra `.env` e substitua o valor de `JWT_SECRET`. O texto de exemplo é apenas um marcador e não é uma chave válida para executar o projeto. Gere uma chave aleatória com o Node.js:
-
-  
+Abra o arquivo `.env` e substitua o valor de `JWT_SECRET`. O valor do exemplo é apenas um marcador. Uma chave pode ser gerada com:
 
 ```bash
-
-node  -e  "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
-
+node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
 ```
-
-  
-
-Copie o resultado para `JWT_SECRET`, sem publicar esse valor. Mantenha `JWT_EXPIRATION_MS=3600000` para tokens com duração de uma hora.
-
-  
 
 | Variável | Uso |
+| --- | --- |
+| `JWT_SECRET` | Chave de assinatura do JWT, com pelo menos 32 caracteres |
+| `JWT_EXPIRATION_MS` | Validade do token em milissegundos; padrão: `3600000` |
 
-
-| `JWT_SECRET` | Chave de assinatura do JWT; obrigatória, com pelo menos 32 caracteres |
-
-| `JWT_EXPIRATION_MS` | Tempo de validade em milissegundos; padrão: `3600000` |
-
-  
+O arquivo `.env` é ignorado pelo Git. Somente o `.env.example` deve ser versionado.
 
 ### 3. Iniciar o backend
 
-  
-
 No Windows/PowerShell, dentro de `BackEnd`:
 
-  
-
 ```powershell
-
 .\mvnw.cmd spring-boot:run
-
 ```
 
-  
+No Linux/macOS:
 
-O backend utiliza a porta `8080`. O H2 é inicializado automaticamente e o Hibernate cria as tabelas. Não é necessário executar scripts SQL.
+```bash
+sh mvnw spring-boot:run
+```
 
-  
-
-**O banco é em memória:** usuários e tarefas são apagados ao reiniciar o backend. Não há seed nem conta de demonstração; crie uma conta pela página de cadastro.
-
-  
+O backend inicia na porta `8080`. O H2 e as tabelas são criados automaticamente. O banco está em memória, portanto usuários e tarefas são apagados quando o backend é reiniciado. Não há usuário de demonstração; crie uma conta pela aplicação.
 
 ### 4. Iniciar o frontend
 
-  
-
-Abra outro terminal na raiz do repositório:
-
-  
+Em outro terminal, partindo da raiz do projeto:
 
 ```bash
-
-cd  FrontEnd
-
-npm  ci
-
-npm  start
-
+cd FrontEnd
+npm ci
+npm start
 ```
 
-  
-
-Acesse http://localhost:4200. Cadastre uma conta; após o cadastro, a aplicação tenta fazer login automaticamente.
-
-  
+Acesse http://localhost:4200. O proxy de desenvolvimento encaminha as chamadas `/api` para o backend na porta `8080`.
 
 ## Endereços
 
-  
-
 | Recurso | Endereço |
-
+| --- | --- |
 | Aplicação | http://localhost:4200 |
-
 | API | http://localhost:8080/api |
-
 | Swagger UI | http://localhost:8080/swagger-ui/index.html |
+| OpenAPI JSON | http://localhost:8080/v3/api-docs |
+| H2 Console | http://localhost:8080/h2-console |
 
-
-O Swagger e o console H2 estão liberados sem autenticação JWT para facilitar a avaliação local do projeto. Acesse o H2 em http://localhost:8080/h2-console e preencha:
+### Acesso ao H2
 
 - **Driver Class:** `org.h2.Driver`
 - **JDBC URL:** `jdbc:h2:mem:testdb`
 - **User Name:** `sa`
 - **Password:** deixe vazio.
 
-Essa liberação é destinada somente à demonstração local. O console H2 permite consultar e alterar diretamente todo o banco, sem o isolamento por usuário da API; não deve ser exposto publicamente ou em produção. Abrir a documentação do Swagger não exige login, mas executar as rotas protegidas de tarefas continua exigindo um token pelo botão **Authorize**.
+Swagger e H2 estão liberados sem autenticação JWT para facilitar a avaliação local. Essa configuração é voltada somente à demonstração. O H2 permite consultar e alterar diretamente todo o banco e não deve ser exposto publicamente ou em produção.
 
-  
+Abrir o Swagger não exige login. Para executar rotas protegidas, faça cadastro e login, copie o token recebido e informe-o no botão **Authorize**.
 
-## API e autenticação
-
-  
+## Principais endpoints
 
 | Método | Rota | Ação |
-
 | --- | --- | --- |
-
-| POST | `/api/users` | Criar conta, sem autenticação |
-
+| POST | `/api/users` | Criar conta |
 | POST | `/api/auth/login` | Fazer login e receber o token |
-
 | GET | `/api/tasks` | Listar tarefas do usuário autenticado |
-
 | GET | `/api/tasks/{uuid}` | Consultar uma tarefa própria |
-
 | POST | `/api/tasks` | Criar uma tarefa |
-
 | PUT | `/api/tasks/{uuid}` | Editar título, descrição e prazo |
-
 | PATCH | `/api/tasks/{uuid}/status` | Alterar o status |
-
 | DELETE | `/api/tasks/{uuid}` | Excluir uma tarefa própria |
 
-  
+As rotas de tarefas exigem `Authorization: Bearer <token>`. O backend utiliza o identificador presente no token para consultar e alterar somente as tarefas do usuário autenticado. As senhas são armazenadas com BCrypt e não são retornadas nas respostas.
 
-As rotas de tarefas exigem o cabeçalho `Authorization: Bearer <token>`. No Swagger, faça cadastro/login e use o token retornado no botão **Authorize**. No frontend, o interceptor adiciona esse cabeçalho às chamadas da API.
+## Prazo e validações
 
-  
-
-O backend usa o identificador do usuário presente no token para consultar as tarefas. A verificação de propriedade ocorre no servidor, não apenas na interface. As senhas são armazenadas como hash BCrypt e não são retornadas nos DTOs de resposta.
-
-  
-
-### Prazo e validações
-
-  
-
-O campo `deadlineInDays` representa o prazo em dias a partir da criação. Por exemplo, uma tarefa criada em 2 de setembro com prazo de 3 dias vence em 5 de setembro, no mesmo horário. Na edição, o prazo continua contando da data original, sem reiniciar a contagem.
-
-  
+O campo `deadlineInDays` representa o prazo contado em dias a partir da criação da tarefa. Na edição, o prazo continua contando a partir da data original.
 
 | Campo | Regra |
-
 | --- | --- |
-
 | Nome | Obrigatório, de 3 a 50 caracteres |
-
 | E-mail | Obrigatório, formato válido e até 254 caracteres |
-
 | Senha no cadastro | Obrigatória, de 8 a 72 caracteres |
-
 | Senha no login | Obrigatória, até 72 caracteres |
-
 | Título | Obrigatório, de 3 a 100 caracteres |
-
 | Descrição | Obrigatória, de 3 a 1000 caracteres |
-
 | Prazo | De 1 a 3650 dias; o formulário exige número inteiro |
 
-  
-
+As entradas são validadas no frontend e no backend. Nome, e-mail, título e descrição têm os espaços das extremidades removidos. A confirmação da senha ocorre no frontend e não é enviada à API.
 
 ## Testes
 
-  
+Configure o `.env` do backend antes de executar a suíte completa.
 
-Configure o `.env` do backend antes de executar a suíte completa, pois o teste de inicialização carrega a aplicação.
-
-  
-
-No Windows/PowerShell, dentro de `BackEnd`:
-
-  
+Backend no Windows/PowerShell:
 
 ```powershell
-
+cd BackEnd
 .\mvnw.cmd test
-
 ```
 
-  
-
-No Linux/macOS, dentro de `BackEnd`:
-
-  
+Backend no Linux/macOS:
 
 ```bash
-
-sh  mvnw  test
-
+cd BackEnd
+sh mvnw test
 ```
 
-  
-
-Dentro de `FrontEnd`:
-
-  
+Frontend:
 
 ```bash
-
-npm  test  --  --watch=false
-
+cd FrontEnd
+npm test -- --watch=false
 ```
 
-  
+O backend possui testes de validação, JWT, edição e propriedade de tarefas, acesso ao Swagger/H2 e inicialização da aplicação. O frontend possui testes de sessão, formulários, operações do dashboard e estados de erro. As chamadas HTTP dos testes do frontend são simuladas.
 
-O backend possui testes de validação dos DTOs, geração/validação de JWT, edição de tarefas e verificação de propriedade, além do teste de inicialização. No frontend, há testes de sessão, formulários, operações do dashboard e estados de erro. As chamadas HTTP nos testes do frontend são simuladas; não é necessário iniciar a API para executá-los.
-
-  
-
+Não há uma suíte end-to-end com navegador e banco reais.
 
 ## Organização
 
-  
+- `BackEnd/src/main/java/com/anthony/todo`: código principal da API.
+- `BackEnd/src/test`: testes do backend.
+- `FrontEnd/src/app/pages`: login, cadastro e dashboard.
+- `FrontEnd/src/app/services`: comunicação com a API e sessão.
+- `FrontEnd/src/app/models`: interfaces dos dados.
+- `FrontEnd/src/app/guards` e `interceptors`: proteção da navegação e envio do JWT.
 
--  `BackEnd/src/main/java/com/anthony/todo`: controllers, services, repositories, entidades, DTOs, mappers e segurança.
+## Dificuldades e aprendizados
 
--  `BackEnd/src/test`: testes do backend.
-
--  `FrontEnd/src/app/pages`: login, cadastro e dashboard.
-
--  `FrontEnd/src/app/services`: comunicação com a API e sessão.
-
--  `FrontEnd/src/app/models`: interfaces de dados.
-
--  `FrontEnd/src/app/guards` e `interceptors`: navegação protegida e envio do JWT.
-
-  
-
-  
+- Integração entre o frontend e o backend.
+- Implementação da autenticação com JWT.
+- Validação dos dados nos dois lados da aplicação.
 
 ## Uso de inteligência artificial
 
-  
-
 A IA foi utilizada como ferramenta de apoio ao estudo durante o desenvolvimento: esclarecimento de dúvidas sobre Angular, Spring Security e Git, explicação de trechos de código e investigação de erros e alternativas de solução.
 
-  
+Também houve apoio na implementação e revisão de partes do código, na estilização e organização visual, na elaboração e execução dos testes e na organização desta documentação. Foram solicitadas explicações e simplificações para acompanhar o funcionamento da solução e manter uma estrutura adequada ao desafio.
 
-Também houve apoio na implementação e revisão de partes do código, na estilização e organização visual do site, na elaboração e execução dos testes e na organização desta documentação. Ao longo do processo, foram solicitadas explicações sobre os resultados dos testes e simplificações para acompanhar o funcionamento da solução e manter uma estrutura adequada ao escopo do desafio.
+## Próximos passos
 
-  
+- Persistir o banco em arquivo ou utilizar outro banco com migrações.
+- Adicionar busca e paginação caso a quantidade de tarefas aumente.
+- Permitir ordenar as tarefas por prazo, criação ou status.
+- Destacar tarefas próximas do vencimento ou atrasadas.
+- Publicar o backend e o frontend em um ambiente de demonstração.
