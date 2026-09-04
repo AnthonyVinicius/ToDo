@@ -356,6 +356,6 @@ A IA foi utilizada como ferramenta de apoio ao estudo durante o desenvolvimento:
 
   
 
-Também houve apoio na implementação e revisão de partes do código, na elaboração de testes e na organização desta documentação. Ao longo do processo, foram solicitadas explicações e simplificações para acompanhar o funcionamento da solução e manter uma estrutura adequada ao escopo do desafio. 
+Também houve apoio na implementação e revisão de partes do código, na estilização e organização visual do site, na elaboração e execução dos testes e na organização desta documentação. Ao longo do processo, foram solicitadas explicações sobre os resultados dos testes e simplificações para acompanhar o funcionamento da solução e manter uma estrutura adequada ao escopo do desafio.
 
   

@@ -73,7 +73,6 @@ export class LoginPage {
           this.errorMessage = 'Não foi possível entrar. Tente novamente.';
         }
         this.loading = false;
-        // Atualiza a tela após a resposta da API no Angular sem Zone.js.
         this.changeDetector.markForCheck();
       },
     });

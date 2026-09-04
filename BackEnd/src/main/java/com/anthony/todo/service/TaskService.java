@@ -62,7 +62,6 @@ public class TaskService {
         Task task = findOwnedTaskById(uuid);
         task.setTitle(request.title());
         task.setDescription(request.description());
-        // O prazo continua sendo contado a partir da criação da tarefa.
         task.setDueAt(task.getCreatedAt().plusDays(request.deadlineInDays()));
         return mapper.toDTO(task);
     }
